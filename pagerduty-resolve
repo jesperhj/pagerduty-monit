@@ -8,14 +8,16 @@
 # Uncomment and enter your service key here.
 # PAGERDUTY_SERVICE_KEY="1234567890abcdef1234567890abcdef"
 
+PAGERDUTY=`which pagerduty`
+
 if [ -z "$1" ]; then
   echo "Usage: $0 <event>"
   exit 1
 elif [ -z "$PAGERDUTY_SERVICE_KEY" ]; then
   echo "Failed to resolve event: you must set the PAGERDUTY_SERVICE_KEY variable."
   exit 1
-elif [ ! -x "/usr/local/bin/pagerduty" ]; then
-  echo "Failed to resolve event: /usr/local/bin/pagerduty does not exist or is not executable."
+elif [ ! -x "$PAGERDUTY" ]; then
+  echo "Failed to resolve event: $PAGERDUTY does not exist or is not executable."
   exit 1
 fi
 
@@ -27,7 +29,7 @@ TMP_FILE="/tmp/pagerduty-$INCIDENT_KEY"
 DESCRIPTION="$EVENT resolved on $HOST"
 
 rm -f $TMP_FILE
-/usr/local/bin/pagerduty -k "$PAGERDUTY_SERVICE_KEY" -i "$INCIDENT_KEY" --description="$DESCRIPTION" resolve
+$PAGERDUTY -k "$PAGERDUTY_SERVICE_KEY" -i "$INCIDENT_KEY" --description="$DESCRIPTION" resolve
 
 if [ "$?" -ne "0" ]; then
   echo "Failed to resolve incident"
